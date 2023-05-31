@@ -1,0 +1,75 @@
+import pygame
+import sys
+
+
+WIDTH = HEIGHT = 512
+DIMENSION = 8
+SQ_SIZE = HEIGHT // DIMENSION
+FPS = 30
+
+
+LIGHT_SQUARE_COLOR = (240, 217, 181)
+DARK_SQUARE_COLOR = (181, 136, 99)
+
+
+pygame.init()
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+CLOCK = pygame.time.Clock()
+
+
+def load_images():
+    images = {}
+    pieces = ['pwn', 'night', 'sniper', 'woahman', 'boat', 'merk']
+    for piece in pieces:
+        images[piece + 'w'] = pygame.transform.scale(pygame.image.load(f'{piece}w.png'), (SQ_SIZE, SQ_SIZE))
+        images[piece + 'b'] = pygame.transform.scale(pygame.image.load(f'{piece}b.png'), (SQ_SIZE, SQ_SIZE))
+    return images
+
+
+
+def run_game():
+    images = load_images()
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        draw_board()
+        draw_pieces(images)
+
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
+
+def draw_board():
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
+            color = LIGHT_SQUARE_COLOR if (row + col) % 2 == 0 else DARK_SQUARE_COLOR
+            pygame.draw.rect(SCREEN, color, pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+
+
+def draw_pieces(images):
+    board = [['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
+
+    for row in range(DIMENSION):
+        for col in range(DIMENSION):
+            piece = board[row][col]
+            if piece != ' ':
+                image = images[piece + 'w'] if piece.isupper() else images[piece + "b"]
+                SCREEN.blit(image, pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+
+if __name__ == '__main__':
+    run_game()
